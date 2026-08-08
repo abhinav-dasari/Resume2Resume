@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}ResumeForge AI — Choose Template & Upload Resume{% endblock %}
+
+{% block content %}
+<!-- Upload Section -->
+<div id="upload-section">
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span class="dot"></span>
+            AI-Powered Resume Builder
+        </div>
+        <h1>
+            Choose a Template,<br>
+            <span class="gradient-text">Upload Your Resume</span>
+        </h1>
+        <p>
+            Select a professional resume template, upload your PDF resume — our AI extracts your information and arranges it in the perfect format. Edit anything before exporting.
+        </p>
+    </section>
+
+    <!-- Template Selection Gallery -->
+    <div class="template-gallery-section">
+        <h2 class="section-heading">
+            <span class="section-icon">🎨</span>
+            Choose Your Resume Template
+        </h2>
+        <p class="section-subtitle">Select a template to get started. Your resume data will be arranged in this layout.</p>
+
+        <div class="template-gallery" id="template-gallery">
+            {% for tmpl in templates %}
+            <div class="template-card" data-template-id="{{ tmpl.id }}" id="template-{{ tmpl.id }}">
+                <div class="template-preview template-preview--{{ tmpl.id }}">
+                    <div class="template-preview-inner">
+                        <!-- Mini resume skeleton preview -->
+                        <div class="preview-header-block"></div>
+                        <div class="preview-line-short"></div>
+                        <div class="preview-line-long"></div>
+                        <div class="preview-line-long"></div>
+                        <div class="preview-section-block"></div>
+                        <div class="preview-line-medium"></div>
+                        <div class="preview-line-long"></div>
+                        <div class="preview-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="template-card-body">
+                    <div class="template-card-icon">{{ tmpl.icon }}</div>
+                    <h3 class="template-card-name">{{ tmpl.name }}</h3>
+                    <p class="template-card-desc">{{ tmpl.description }}</p>
+                    <span class="template-card-layout">{{ tmpl.layout_type | replace('-', ' ') | title }}</span>
+                </div>
+                <div class="template-selected-badge">✓ Selected</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Upload Zone -->
+    <div class="upload-zone-wrapper" id="upload-zone-wrapper">
+        <h2 class="section-heading">
+            <span class="section-icon">📄</span>
+            Upload Your Resume
+        </h2>
+        <p class="section-subtitle" id="upload-instruction">Select a template above first, then upload your PDF resume.</p>
+
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="hidden" id="template-id-input" name="template_id" value="">
+
+            <div class="upload-zone disabled" id="upload-zone">
+                <input type="file" id="file-input" name="file" accept=".pdf" hidden>
+
+                <div id="upload-prompt">
+                    <span class="upload-icon">📄</span>
+                    <h3>Drag & drop your resume PDF here</h3>
+                    <p>or <span class="browse-btn">browse files</span> to upload</p>
+
+                    <div class="format-badges">
+                        <span class="format-badge">PDF</span>
+                    </div>
+                </div>
+
+                <!-- File Preview -->
+                <div class="file-preview" id="file-preview">
+                    <span class="file-icon">📎</span>
+                    <div class="file-info">
+                        <div class="file-name" id="file-name">filename.pdf</div>
+                        <div class="file-size" id="file-size">2.3 MB</div>
+                    </div>
+                    <button type="button" class="remove-file" onclick="removeFile()" title="Remove file" id="remove-file-btn">✕</button>
+                </div>
+            </div>
+
+            <!-- Upload Button -->
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <button type="submit" class="btn btn-primary" id="upload-btn" disabled style="display: none;">
+                    🚀 Process Resume
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="features-grid">
+        <div class="feature-card" id="feature-templates">
+            <span class="card-icon">🎨</span>
+            <h3>Pro Templates</h3>
+            <p>Choose from 4 professionally designed resume templates. Modern, classic, creative, or corporate — find your style.</p>
+        </div>
+        <div class="feature-card" id="feature-ai">
+            <span class="card-icon">🧠</span>
+            <h3>AI Extraction</h3>
+            <p>Our AI reads your resume PDF and extracts name, skills, projects, education, experience, and more.</p>
+        </div>
+        <div class="feature-card" id="feature-fill">
+            <span class="card-icon">✏️</span>
+            <h3>Edit & Adjust</h3>
+            <p>All extracted fields are fully editable. Fix any mistakes before generating your perfectly formatted resume.</p>
+        </div>
+        <div class="feature-card" id="feature-export">
+            <span class="card-icon">📦</span>
+            <h3>Export Data</h3>
+            <p>Download your structured resume data as JSON or CSV for easy integration with any system.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Processing Section (hidden until upload) -->
+<div id="processing-section" style="display: none;">
+    <div class="processing-container">
+        <div class="processing-spinner"></div>
+        <h2 class="processing-title">Processing Your Resume</h2>
+        <p class="processing-subtitle">Extracting your information from the PDF...</p>
+
+        <div class="processing-steps">
+            <div class="step" id="step-upload">
+                <div class="step-icon">1</div>
+                <span class="step-text">Uploading resume</span>
+            </div>
+            <div class="step" id="step-read">
+                <div class="step-icon">2</div>
+                <span class="step-text">Reading PDF content</span>
+            </div>
+            <div class="step" id="step-extract">
+                <div class="step-icon">3</div>
+                <span class="step-text">Extracting information</span>
+            </div>
+            <div class="step" id="step-form">
+                <div class="step-icon">4</div>
+                <span class="step-text">Applying template</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

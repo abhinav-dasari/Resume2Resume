@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+
+{% block title %}Results — ResumeForge AI{% endblock %}
+
+{% block content %}
+<!-- Result Header -->
+<div class="result-header">
+    <div>
+        <h1>📋 Your Resume — Extracted & Formatted</h1>
+        <p style="color: var(--text-secondary); margin-top: 0.25rem; font-size: 0.9rem;">
+            Review and edit the auto-filled fields below. Click any field to modify it.
+        </p>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        <span class="doc-type-badge" id="doc-type-badge">
+            {{ template.icon }} {{ template.name }}
+        </span>
+    </div>
+</div>
+
+<!-- Template-Based Resume Layout -->
+<div class="resume-layout resume-layout--{{ template_id }}" id="resume-layout">
+
+    {% if template.layout_type == 'two-column' %}
+    <!-- ═══ TWO-COLUMN LAYOUT (Professional Classic) ═══ -->
+    <div class="resume-two-col">
+        <!-- Sidebar -->
+        <aside class="resume-sidebar">
+            <!-- Contact Info -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-section-title">📬 Contact</h3>
+                <div class="sidebar-field">
+                    <label for="field-email-side">Email</label>
+                    <input type="text" id="field-email-side" name="email" value="{{ fields.get('email', '') }}" class="sidebar-input">
+                </div>
+                <div class="sidebar-field">
+                    <label for="field-phone-side">Phone</label>
+                    <input type="text" id="field-phone-side" name="phone" value="{{ fields.get('phone', '') }}" class="sidebar-input">
+                </div>
+                <div class="sidebar-field">
+                    <label for="field-address-side">Location</label>
+                    <input type="text" id="field-address-side" name="address" value="{{ fields.get('address', '') }}" class="sidebar-input">
+                </div>
+                <div class="sidebar-field">
+                    <label for="field-linkedin-side">LinkedIn</label>
+                    <input type="text" id="field-linkedin-side" name="linkedin" value="{{ fields.get('linkedin', '') }}" class="sidebar-input">
+                </div>
+                <div class="sidebar-field">
+                    <label for="field-github-side">GitHub</label>
+                    <input type="text" id="field-github-side" name="github" value="{{ fields.get('github', '') }}" class="sidebar-input">
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-section-title">⚡ Skills</h3>
+                {% if fields.get('skills') %}
+                <div class="sidebar-tags">
+                    {% for skill in fields.get('skills', []) %}
+                    <span class="sidebar-tag">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="sidebar-field">
+                    <input type="text" id="field-skills-side" name="skills"
+                           value="{{ fields.get('skills', [])|join(', ') }}"
+                           placeholder="Comma-separated skills" class="sidebar-input">
+                </div>
+            </div>
+
+            <!-- Languages -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-section-title">💻 Languages</h3>
+                <div class="sidebar-field">
+                    <input type="text" id="field-languages-side" name="languages"
+                           value="{{ fields.get('languages', [])|join(', ') }}"
+                           placeholder="Comma-separated languages" class="sidebar-input">
+                </div>
+            </div>
+
+            <!-- Education -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-section-title">🎓 Education</h3>
+                {% if fields.get('education_post_graduation') %}
+                <div class="sidebar-field">
+                    <label>Post Graduate</label>
+                    <input type="text" name="education_post_graduation" value="{{ fields.get('education_post_graduation', '') }}" class="sidebar-input">
+                </div>
+                {% endif %}
+                {% if fields.get('education_under_graduation') %}
+                <div class="sidebar-field">
+                    <label>Under Graduate</label>
+                    <input type="text" name="education_under_graduation" value="{{ fields.get('education_under_graduation', '') }}" class="sidebar-input">
+                </div>
+                {% endif %}
+                {% if fields.get('education_12th') %}
+                <div class="sidebar-field">
+                    <label>12th</label>
+                    <input type="text" name="education_12th" value="{{ fields.get('education_12th', '') }}" class="sidebar-input">
+                </div>
+                {% endif %}
+                {% if fields.get('education_10th') %}
+                <div class="sidebar-field">
+                    <label>10th</label>
+                    <input type="text" name="education_10th" value="{{ fields.get('education_10th', '') }}" class="sidebar-input">
+                </div>
+                {% endif %}
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="resume-main">
+            <!-- Header / Name -->
+            <div class="resume-name-block">
+                <input type="text" id="field-name" name="name" value="{{ fields.get('name', '') }}" class="resume-name-input" placeholder="Your Full Name">
+            </div>
+
+            <!-- Experience -->
+            <div class="resume-section">
+                <h3 class="resume-section-title">💼 Experience</h3>
+                <textarea id="field-experience" name="experience" rows="4" class="resume-textarea">{{ fields.get('experience', '') }}</textarea>
+            </div>
+
+            <!-- Projects -->
+            {% if fields.get('project_1') or fields.get('projects') %}
+            <div class="resume-section">
+                <h3 class="resume-section-title">🚀 Projects</h3>
+                {% for i in range(1, 6) %}
+                    {% set pkey = 'project_' ~ i %}
+                    {% if fields.get(pkey) %}
+                    <div class="resume-project-item">
+                        <label>Project {{ i }}</label>
+                        <textarea name="{{ pkey }}" rows="2" class="resume-textarea">{{ fields.get(pkey, '') }}</textarea>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                {% if fields.get('projects') %}
+                <div class="resume-project-item">
+                    <label>Full Projects Summary</label>
+                    <textarea name="projects" rows="3" class="resume-textarea">{{ fields.get('projects', '') }}</textarea>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Certifications -->
+            {% if fields.get('certification_1') or fields.get('certifications') %}
+            <div class="resume-section">
+                <h3 class="resume-section-title">📜 Certifications</h3>
+                {% for i in range(1, 6) %}
+                    {% set ckey = 'certification_' ~ i %}
+                    {% if fields.get(ckey) %}
+                    <div class="resume-project-item">
+                        <label>Certification {{ i }}</label>
+                        <textarea name="{{ ckey }}" rows="2" class="resume-textarea">{{ fields.get(ckey, '') }}</textarea>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                {% if fields.get('certifications') %}
+                <div class="resume-project-item">
+                    <label>Full Certifications Summary</label>
+                    <textarea name="certifications" rows="2" class="resume-textarea">{{ fields.get('certifications', '') }}</textarea>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% else %}
+    <!-- ═══ SINGLE-COLUMN LAYOUT (Modern Minimal / Creative Bold / Corporate Clean) ═══ -->
+    <div class="form-card resume-single-col" id="result-form-card">
+        <form id="result-form">
+            <!-- Header: Name & Contact -->
+            <div class="resume-section resume-header-section">
+                <div class="resume-name-block">
+                    <input type="text" id="field-name" name="name" value="{{ fields.get('name', '') }}" class="resume-name-input" placeholder="Your Full Name">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field-email">Email Address</label>
+                        <input type="email" id="field-email" name="email" value="{{ fields.get('email', '') }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="field-phone">Phone Number</label>
+                        <input type="tel" id="field-phone" name="phone" value="{{ fields.get('phone', '') }}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field-address">Address / Location</label>
+                        <input type="text" id="field-address" name="address" value="{{ fields.get('address', '') }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="field-linkedin">LinkedIn</label>
+                        <input type="url" id="field-linkedin" name="linkedin" value="{{ fields.get('linkedin', '') }}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field-github">GitHub</label>
+                        <input type="url" id="field-github" name="github" value="{{ fields.get('github', '') }}">
+                    </div>
+                    <div class="form-group"></div>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="resume-section">
+                <h3 class="resume-section-title">⚡ Skills</h3>
+                {% if fields.get('skills') %}
+                <div class="tags-container" id="skills-tags">
+                    {% for skill in fields.get('skills', []) %}
+                    <span class="tag">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    <input type="text" id="field-skills" name="skills"
+                           value="{{ fields.get('skills', [])|join(', ') }}"
+                           placeholder="Comma-separated skills"
+                           style="margin-top: 0.5rem;">
+                </div>
+            </div>
+
+            <!-- Languages -->
+            <div class="resume-section">
+                <h3 class="resume-section-title">💻 Programming Languages</h3>
+                <div class="form-group">
+                    <input type="text" id="field-languages" name="languages"
+                           value="{{ fields.get('languages', [])|join(', ') }}"
+                           placeholder="Comma-separated languages">
+                </div>
+            </div>
+
+            <!-- Experience -->
+            <div class="resume-section">
+                <h3 class="resume-section-title">💼 Experience</h3>
+                <div class="form-group">
+                    <textarea id="field-experience" name="experience" rows="4">{{ fields.get('experience', '') }}</textarea>
+                </div>
+            </div>
+
+            <!-- Education -->
+            {% if fields.get('education_post_graduation') or fields.get('education_under_graduation') or fields.get('education_12th') or fields.get('education_10th') or fields.get('education') %}
+            <div class="resume-section">
+                <h3 class="resume-section-title">🎓 Education</h3>
+
+                {% if fields.get('education_post_graduation') or fields.get('education_under_graduation') %}
+                <div class="form-row">
+                    {% if fields.get('education_post_graduation') %}
+                    <div class="form-group">
+                        <label for="field-edu-pg">Post Graduate (PG)</label>
+                        <input type="text" id="field-edu-pg" name="education_post_graduation"
+                               value="{{ fields.get('education_post_graduation', '') }}"
+                               placeholder="Degree, College/University, Marks/CGPA">
+                    </div>
+                    {% endif %}
+
+                    {% if fields.get('education_under_graduation') %}
+                    <div class="form-group">
+                        <label for="field-edu-ug">Under Graduate (UG)</label>
+                        <input type="text" id="field-edu-ug" name="education_under_graduation"
+                               value="{{ fields.get('education_under_graduation', '') }}"
+                               placeholder="Degree, College/University, CGPA">
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% if fields.get('education_12th') or fields.get('education_10th') %}
+                <div class="form-row">
+                    {% if fields.get('education_12th') %}
+                    <div class="form-group">
+                        <label for="field-edu-12">12th / Intermediate</label>
+                        <input type="text" id="field-edu-12" name="education_12th"
+                               value="{{ fields.get('education_12th', '') }}"
+                               placeholder="School/College, Percentage/Marks">
+                    </div>
+                    {% endif %}
+
+                    {% if fields.get('education_10th') %}
+                    <div class="form-group">
+                        <label for="field-edu-10">10th / Secondary</label>
+                        <input type="text" id="field-edu-10" name="education_10th"
+                               value="{{ fields.get('education_10th', '') }}"
+                               placeholder="School Name, CGPA/Percentage">
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% if fields.get('education') %}
+                <div class="form-group">
+                    <label for="field-education">Full Education Summary</label>
+                    <textarea id="field-education" name="education" rows="3">{{ fields.get('education', '') }}</textarea>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Projects -->
+            {% if fields.get('project_1') or fields.get('projects') %}
+            <div class="resume-section">
+                <h3 class="resume-section-title">🚀 Projects</h3>
+                {% for i in range(1, 6) %}
+                    {% set pkey = 'project_' ~ i %}
+                    {% if fields.get(pkey) %}
+                    <div class="form-group">
+                        <label for="field-project-{{ i }}">Project {{ i }}</label>
+                        <textarea id="field-project-{{ i }}" name="{{ pkey }}" rows="2">{{ fields.get(pkey, '') }}</textarea>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                {% if fields.get('projects') %}
+                <div class="form-group">
+                    <label for="field-projects">Full Projects Summary</label>
+                    <textarea id="field-projects" name="projects" rows="3">{{ fields.get('projects', '') }}</textarea>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Certifications -->
+            {% if fields.get('certification_1') or fields.get('certifications') %}
+            <div class="resume-section">
+                <h3 class="resume-section-title">📜 Certifications & Trainings</h3>
+                {% for i in range(1, 6) %}
+                    {% set ckey = 'certification_' ~ i %}
+                    {% if fields.get(ckey) %}
+                    <div class="form-group">
+                        <label for="field-cert-{{ i }}">Certification {{ i }}</label>
+                        <textarea id="field-cert-{{ i }}" name="{{ ckey }}" rows="2">{{ fields.get(ckey, '') }}</textarea>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                {% if fields.get('certifications') %}
+                <div class="form-group">
+                    <label for="field-certifications">Full Certifications Summary</label>
+                    <textarea id="field-certifications" name="certifications" rows="2">{{ fields.get('certifications', '') }}</textarea>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Export Section -->
+<div class="export-section" id="export-section">
+    <h3>📦 Export Your Formatted Resume & Data</h3>
+    <div class="btn-group">
+        <button type="button" class="btn btn-pdf" id="export-pdf-btn" onclick="downloadPDF()">
+            📄 Download Resume (PDF)
+        </button>
+        <a href="/export/json" class="btn btn-primary" id="export-json-btn">
+            📥 Download JSON
+        </a>
+        <a href="/export/csv" class="btn btn-success" id="export-csv-btn">
+            📊 Download CSV
+        </a>
+        <a href="/" class="btn btn-secondary" id="upload-another-btn">
+            📄 Upload Another Resume
+        </a>
+    </div>
+</div>
+
+<!-- Raw Text Section -->
+<div class="raw-text-section" id="raw-text-section">
+    <button class="raw-text-toggle" id="raw-text-toggle">
+        <span class="chevron">▶</span>
+        View Raw Extracted Text
+    </button>
+    <div class="raw-text-content" id="raw-text-content">{{ raw_text }}</div>
+</div>
+{% endblock %}

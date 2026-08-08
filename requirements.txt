@@ -1,0 +1,9 @@
+flask
+flask-sqlalchemy
+easyocr
+pymupdf
+pillow
+pandas
+opencv-python-headless
+xhtml2pdf
+reportlab
