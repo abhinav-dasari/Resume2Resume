@@ -25,6 +25,7 @@ from flask import (
 
 from models import db, User, DocumentHistory
 from ocr.ocr import extract_text
+from dotenv import load_dotenv
 from extractor.parser import extract_info
 from exports.export import export_json, export_csv, export_pdf
 from utils.helpers import allowed_file, secure_save, cleanup_old_files
