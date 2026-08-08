@@ -30,7 +30,7 @@ share/python-wheels/
 .env.local
 .env.*
 !.env.example
-
+.env.example
 # IDE & Editors
 .idea/
 .vscode/
