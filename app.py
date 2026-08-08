@@ -30,13 +30,27 @@ from exports.export import export_json, export_csv, export_pdf
 from utils.helpers import allowed_file, secure_save, cleanup_old_files
 from resume_templates import get_template, get_all_templates
 
+from dotenv import load_dotenv
+
+# Load environment variables from .env file if available
+load_dotenv()
+
 # ─── App Configuration ───────────────────────────────
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
 
-# Database Configuration (SQLite)
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'autofill.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
+# Database Configuration (Supports PostgreSQL & SQLite fallback)
+DEFAULT_SQLITE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'autofill.db')
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    # Fix Heroku/Supabase postgres:// scheme to postgresql://
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DEFAULT_SQLITE_PATH}'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize Database
