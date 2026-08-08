@@ -9,3 +9,4 @@ xhtml2pdf
 reportlab
 psycopg2-binary
 python-dotenv
+gunicorn
