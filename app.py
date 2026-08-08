@@ -22,6 +22,7 @@ from flask import (
     Flask, render_template, request, session,
     redirect, url_for, flash, jsonify
 )
+from flask import Flask
 
 from models import db, User, DocumentHistory
 from ocr.ocr import extract_text
